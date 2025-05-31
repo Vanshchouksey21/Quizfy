@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
+import { FaArrowLeft } from "react-icons/fa";
 
 const ChooseSubject = () => {
   const [subjects, setSubjects] = useState([]);
@@ -37,23 +38,56 @@ const ChooseSubject = () => {
     <Container
       fluid
       className="d-flex flex-column justify-content-center align-items-center"
-      style={{ minHeight: "90vh", padding: "3rem 1rem" }}
+      style={{ minHeight: "90vh", padding: "3rem 1rem", position: "relative" }}
     >
+     
+
+      {/* Heading */}
+    <div
+        onClick={() => navigate("/")}
+        style={{
+          position: "fixed",
+          top: "58px",
+          left: "37px",
+          cursor: "pointer",
+          fontSize: "2.4rem",
+          color: "#0d6efd",
+          zIndex: 999,
+        }}
+        title="Back to Home"
+      >
+        <FaArrowLeft />
+      </div>
+      
       <h2
         className="mb-5 text-center fw-bold"
-        style={{ fontFamily: "'Poppins', sans-serif", fontSize: "2.8rem", color: "#0d6efd", letterSpacing: "2px" }}
+        style={{
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: "2.8rem",
+          color: "#0d6efd",
+          letterSpacing: "2px",
+        }}
       >
         🧠 Choose Your Quiz Subject
       </h2>
+      
 
+      {/* Content */}
       {loading ? (
         <Spinner animation="border" variant="primary" role="status" />
       ) : error ? (
-        <Alert variant="danger" className="text-center w-100" style={{ maxWidth: "400px" }}>
+        <Alert
+          variant="danger"
+          className="text-center w-100"
+          style={{ maxWidth: "400px" }}
+        >
           {error}
         </Alert>
       ) : (
-        <Row className="justify-content-center w-100" style={{ maxWidth: "960px" }}>
+        <Row
+          className="justify-content-center w-100"
+          style={{ maxWidth: "960px" }}
+        >
           {subjects.map((subject, idx) => (
             <Col
               key={subject._id}
@@ -62,7 +96,11 @@ const ChooseSubject = () => {
               md={4}
               lg={3}
               className="mb-4 d-flex align-items-stretch"
-              style={{ animation: `fadeInUp 0.5s ease forwards`, animationDelay: `${idx * 0.15}s`, opacity: 0 }}
+              style={{
+                animation: `fadeInUp 0.5s ease forwards`,
+                animationDelay: `${idx * 0.15}s`,
+                opacity: 0,
+              }}
             >
               <Card
                 onClick={() => handleSubjectClick(subject)}
@@ -75,7 +113,10 @@ const ChooseSubject = () => {
                 }}
               >
                 <Card.Body className="d-flex flex-column justify-content-center">
-                  <Card.Title className="fw-semibold fs-5 text-primary mb-0" style={{ userSelect: "none" }}>
+                  <Card.Title
+                    className="fw-semibold fs-5 text-primary mb-0"
+                    style={{ userSelect: "none" }}
+                  >
                     {subject.name}
                   </Card.Title>
                 </Card.Body>
@@ -85,6 +126,7 @@ const ChooseSubject = () => {
         </Row>
       )}
 
+      {/* Animation CSS */}
       <style type="text/css">{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
 
@@ -94,6 +136,7 @@ const ChooseSubject = () => {
           transform: translateY(-8px) scale(1.05);
           box-shadow: 0 12px 30px rgba(13, 110, 253, 0.5);
         }
+
         .subject-card:hover .card-title {
           color: white;
         }
@@ -110,6 +153,7 @@ const ChooseSubject = () => {
         }
       `}</style>
     </Container>
+    
   );
 };
 

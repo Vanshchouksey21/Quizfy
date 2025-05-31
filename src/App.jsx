@@ -9,6 +9,7 @@ import About from './pages/About';
 import QuizPage from './pages/QuizPage';
 import MyLeaderboard from './pages/MyLeaderboard';
 import Footer from './components/Footer';
+import Contact from './pages/ContactUs';
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
          <Route path="/about" element={<About/>} />
          <Route path="/quiz/:subject" element={<QuizPage />} />
          <Route path="/leaderboard" element={<MyLeaderboard />} />
+         <Route path="/contact" element={<Contact />} />
 
       </Routes>
       <br />

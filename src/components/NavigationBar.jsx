@@ -68,6 +68,14 @@ const NavigationBar = () => {
             >
               Leaderboard
             </Nav.Link>
+              <Nav.Link
+              as={Link}
+              to="/contact"
+              className="nav-link-hover"
+              style={{ fontSize: '1.05rem', fontWeight: 500 }}
+            >
+              Contact Us 
+            </Nav.Link>
           </Nav>
 
           <Nav className="mt-3 mt-lg-0">

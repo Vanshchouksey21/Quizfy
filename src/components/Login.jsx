@@ -8,9 +8,13 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [otpSent, setOtpSent] = useState(false);
-  const navigate = useNavigate(); // ✅ Properly placed here
+  const navigate = useNavigate();
 
   const sendOtp = async () => {
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
     try {
       const res = await axios.post('http://localhost:8000/api/send-otp', { email });
       toast.success(res.data.message);
@@ -21,64 +25,71 @@ const Login = () => {
   };
 
   const verifyOtp = async () => {
+    if (!otp) {
+      toast.error("Please enter the OTP");
+      return;
+    }
     try {
       const res = await axios.post('http://localhost:8000/api/verify-otp', { email, otp });
-       const userId = res.data.userId;
-       const name = res.data.name;
-    localStorage.setItem('userId', userId);
-    localStorage.setItem('name', name);
-      console.log(res);
-      localStorage.setItem('token', res.data.token); // ✅ Save token if provided
-      
+      const { userId, name, token } = res.data;
+
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('name', name);
+      localStorage.setItem('token', token);
+
       toast.success('Login successful!');
-      setTimeout(() => {
-        navigate('/subject'); // ✅ Redirect after success
-      }, 1500);
+      setTimeout(() => navigate('/subject'), 1500);
     } catch (err) {
       toast.error(err.response?.data?.message || 'OTP verification failed');
     }
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '500px' }}>
-      <ToastContainer position="top-right" />
-      <h2 className="mb-4 text-center">Login with OTP</h2>
-      <div className="mb-3">
-        <label>Email address</label>
-        <input
-          type="email"
-          className="form-control"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={otpSent}
-        />
-      </div>
-      {otpSent && (
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className="card shadow-lg p-4" style={{ width: '100%', maxWidth: '400px' }}>
+        <h3 className="text-center mb-4 text-primary">Login with OTP</h3>
         <div className="mb-3">
-          <label>Enter OTP</label>
+          <label className="form-label">Email Address</label>
           <input
-            type="text"
+            type="email"
             className="form-control"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            disabled={otpSent}
+            required
           />
         </div>
-      )}
-      {!otpSent ? (
-        <button className="btn btn-primary w-100" onClick={sendOtp}>
-          Send OTP
+
+        {otpSent && (
+          <div className="mb-3">
+            <label className="form-label">Enter OTP</label>
+            <input
+              type="text"
+              className="form-control"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Enter the OTP sent to your email"
+              required
+            />
+          </div>
+        )}
+
+        <button
+          className={`btn ${otpSent ? 'btn-success' : 'btn-primary'} w-100`}
+          onClick={otpSent ? verifyOtp : sendOtp}
+        >
+          {otpSent ? 'Verify OTP' : 'Send OTP'}
         </button>
-      ) : (
-        <button className="btn btn-success w-100" onClick={verifyOtp}>
-          Verify OTP
-        </button>
-      )}
-      <p className="mt-3 text-center">
-        Don't have an account?{' '}
-        <Link to="/signup" className="text-decoration-none text-primary">
-          Sign up here
-        </Link>
-      </p>
+
+        <p className="text-center mt-3">
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" className="text-decoration-none text-success">
+            Sign up here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
