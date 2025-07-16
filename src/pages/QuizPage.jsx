@@ -6,6 +6,10 @@ import {
 import axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa';
 
+// Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const QuizPage = () => {
   const { subject } = useParams();
   const navigate = useNavigate();
@@ -18,9 +22,9 @@ const QuizPage = () => {
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(180); // 3 minutes
 
-  // Redirect to login if no user (add login check here)
+  // Redirect to login if no user
   useEffect(() => {
-    const token = localStorage.getItem('token'); // assuming token means logged in
+    const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
     }
@@ -30,6 +34,8 @@ const QuizPage = () => {
     async function fetchQuestions() {
       try {
         const res = await axios.get(`http://localhost:8000/api/questions/${subject}`);
+
+        // for randomizing questions and limiting to 5
         const shuffled = res.data.sort(() => 0.5 - Math.random()).slice(0, 5);
         setQuestions(shuffled);
         setLoading(false);
@@ -44,7 +50,6 @@ const QuizPage = () => {
   // Countdown timer
   useEffect(() => {
     if (submitted || loading) return;
-
     if (timeLeft === 0) {
       handleSubmit();
       return;
@@ -53,6 +58,25 @@ const QuizPage = () => {
     const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, submitted, loading]);
+
+  // Detect tab switch
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && !submitted && !loading) {
+        toast.warn("❗You switched tabs! cheater ", {
+          position: "top-center",
+          autoClose: 5000,
+          theme: "colored",
+        });
+        handleSubmit();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [submitted, loading]);
 
   const handleOptionClick = (option) => {
     setSelectedAnswers({
@@ -66,6 +90,8 @@ const QuizPage = () => {
   };
 
   const handleSubmit = async () => {
+    if (submitted) return; // prevent double submissions
+
     let count = 0;
     questions.forEach((q, index) => {
       if (selectedAnswers[index] === q.answer) count++;
@@ -73,15 +99,17 @@ const QuizPage = () => {
     setScore(count);
     setSubmitted(true);
 
-    const user = localStorage.getItem('name') || 'Anonymous'; // adjust as needed
-    
+    const user = localStorage.getItem('name') || 'Anonymous';
     const scoreData = { user, subject, score: count };
 
     try {
       await axios.post('http://localhost:8000/api/leaderboard', scoreData);
     } catch (err) {
       console.error('Error saving score:', err);
-      alert('Failed to save score, please try again.');
+      toast.error('⚠️ Failed to save score, please try again.', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -93,7 +121,8 @@ const QuizPage = () => {
 
   return (
     <Container className="mt-5" style={{ maxWidth: '900px' }}>
-      {/* Back Button */}
+      <ToastContainer />
+
       <Button
         variant="outline-dark"
         className="mb-4 d-flex align-items-center gap-2"
@@ -105,7 +134,12 @@ const QuizPage = () => {
 
       <h2
         className="text-center mb-4 fw-bold"
-        style={{ fontFamily: "'Poppins', sans-serif", fontSize: '2.5rem', color: '#0d6efd', letterSpacing: '1.5px' }}
+        style={{
+          fontFamily: "'Poppins', sans-serif",
+          fontSize: '2.5rem',
+          color: '#0d6efd',
+          letterSpacing: '1.5px',
+        }}
       >
         📝 {subject.toUpperCase()} Quiz
       </h2>
@@ -203,7 +237,6 @@ const QuizPage = () => {
               ))}
             </div>
 
-            {/* Prev/Next Buttons */}
             <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
               <Button
                 variant="outline-secondary"
@@ -224,14 +257,12 @@ const QuizPage = () => {
               </Button>
             </div>
 
-            {/* Submit Button */}
             <div className="text-center mt-4">
               <Button
                 variant="success"
                 onClick={handleSubmit}
                 size="lg"
                 style={{ minWidth: '160px', fontWeight: '600' }}
-               
                 title={Object.keys(selectedAnswers).length < questions.length ? "Answer all questions before submitting" : ""}
               >
                 Submit Quiz

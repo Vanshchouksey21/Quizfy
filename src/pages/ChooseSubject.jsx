@@ -10,6 +10,8 @@ const ChooseSubject = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+
+  // token check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {

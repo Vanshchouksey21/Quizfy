@@ -31,6 +31,7 @@ const Login = () => {
     }
     try {
       const res = await axios.post('http://localhost:8000/api/verify-otp', { email, otp });
+      
       const { userId, name, token } = res.data;
 
       localStorage.setItem('userId', userId);

@@ -6,16 +6,19 @@ const Home = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+
+
+  // token check and navigation logic
   const handleStartQuiz = () => {
     setLoading(true);
     setTimeout(() => {
-      const token = localStorage.getItem('token'); // Get auth token
+      const token = localStorage.getItem('token'); 
       if (token) {
-        navigate('/subject'); // Redirect to subject page
+        navigate('/subject'); 
       } else {
-        navigate('/login'); // Redirect to login page
+        navigate('/login'); 
       }
-    }, 1000); // simulate a delay for loading effect
+    }, 1000); 
   };
 
   return (

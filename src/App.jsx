@@ -10,6 +10,7 @@ import QuizPage from './pages/QuizPage';
 import MyLeaderboard from './pages/MyLeaderboard';
 import Footer from './components/Footer';
 import Contact from './pages/ContactUs';
+import Admin from './components/Admin';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
          <Route path="/quiz/:subject" element={<QuizPage />} />
          <Route path="/leaderboard" element={<MyLeaderboard />} />
          <Route path="/contact" element={<Contact />} />
+         <Route path="/admin" element={<Admin/>} />
 
       </Routes>
       <br />
