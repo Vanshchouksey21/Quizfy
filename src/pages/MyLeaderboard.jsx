@@ -11,6 +11,14 @@ const Leaderboard = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+
+    // Check if user is logged in
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     async function fetchScores() {
       try {
         const response = await axios.get('http://localhost:8000/api/leaderboard');
@@ -26,6 +34,7 @@ const Leaderboard = () => {
 
   return (
     <Container className="mt-5">
+
       <Button variant="outline-dark" className="mb-3" onClick={() => navigate(-1)}>
         <FaArrowLeft className="me-2" />
         Back
