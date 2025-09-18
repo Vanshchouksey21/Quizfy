@@ -16,7 +16,7 @@ const About = () => {
               About <span style={{ color: '#FF7F50' }}>Quizfy</span>
             </h2>
             <p className="text-center text-muted fs-5 mx-auto" style={{ maxWidth: '700px' }}>
-              Quizfy is an interactive quiz platform designed to enhance your learning through fun and engaging quizzes.
+              Quizfy is an interactive quiz platform designed to enhance your learning through fun and engaging quizzes..
             </p>
           </Col>
         </Row>
